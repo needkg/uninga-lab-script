@@ -8,7 +8,6 @@ set "TEMP_ZIP_PATH=%APPDATA%\Claudinei\File.zip"
 
 :main
 cls
-mode 100,20
 echo:
 echo Iniciando o processo de aplicação...
 timeout /nobreak 1 >nul 2>&1
@@ -60,7 +59,6 @@ echo:
 call :update_gp
 echo:
 echo Por favor, reinicie o PC para que as alterações entrem em vigor.
-pause
 exit
 
 :create_directories
