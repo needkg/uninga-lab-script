@@ -4,7 +4,7 @@ title Script feito por Claudinei Junior
 
 set "BASE_DIR=C:\Windows\System32\GroupPolicyUsers"
 set "GROUP_POLICY_DIR=C:\Windows\System32\GroupPolicy"
-set "TEMP_ZIP_PATH=%LOCALAPPDATA%\Temp\file.zip"
+set "TEMP_ZIP_PATH=%APPDATA%\Claudinei\File.zip"
 
 :main
 cls
