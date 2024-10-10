@@ -61,7 +61,7 @@ call :update_gp
 echo:
 echo Por favor, reinicie o PC para que as alterações entrem em vigor.
 pause
-goto menu
+exit
 
 :create_directories
 echo Criando diretórios...
