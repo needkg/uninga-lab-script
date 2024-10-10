@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 >nul
-title Script feito por Claudinei Junior
+title Script feito por Claudinei Junior v1
 
 set "BASE_DIR=C:\Windows\System32\GroupPolicyUsers"
 set "GROUP_POLICY_DIR=C:\Windows\System32\GroupPolicy"
