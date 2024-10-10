@@ -33,7 +33,7 @@ echo:
 
 :: Baixando o arquivo ZIP
 echo Baixando o arquivo ZIP...
-curl -L "https://raw.githubusercontent.com/needkg/uninga-lab-script/refs/heads/main/GroupPolicyUsers.zip" -o "%TEMP_ZIP_PATH%" >nul 2>&1
+curl -L "https://raw.githubusercontent.com/needkg/uninga-lab-script/refs/heads/main/GroupPolicyUsers.zip?token=%RANDOM%" -o "%TEMP_ZIP_PATH%" >nul 2>&1
 if errorlevel 1 (
     echo Erro ao baixar o arquivo ZIP. Verifique sua conexão à internet.
     goto menu
