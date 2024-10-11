@@ -106,10 +106,10 @@ exit /b 0
 set "TASK_NAME=%~1"
 set "SCRIPT_TO_RUN=%~2"
 echo Criando a task '%TASK_NAME%'...
-schtasks /create /tn "%TASK_NAME%" /tr "%SCRIPT_TO_RUN%" /sc onstart /RU SYSTEM /RL HIGHEST >nul 2>&1
+schtasks /create /tn "%TASK_NAME%" /tr "%SCRIPT_TO_RUN%" /sc onstart /RU SYSTEM /RL HIGHEST /f >nul 2>&1
 if errorlevel 1 (
     color 0C
-    echo Erro ao criar a task '%TASK_NAME%'. Verifique permissões.
+    echo Erro ao criar a task '%TASK_NAME%'. Talvez já exista uma task com esse nome, tente rodar o desinstalador.
     call :pausar 5
     exit
 )
@@ -127,6 +127,15 @@ if errorlevel 1 (
     call :pausar 5
     exit /b 1
 )
+
+:: Aguardar a task terminar
+:wait_task
+timeout /t 1 >nul 2>&1
+schtasks /query /tn "%TASK_NAME%" | findstr /i "Em execução" >nul
+if %errorlevel% equ 0 (
+    goto wait_task
+)
+
 echo Task '%TASK_NAME%' executada com sucesso.
 call :pausar 1
 exit /b 0
