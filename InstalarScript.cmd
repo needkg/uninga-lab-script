@@ -71,6 +71,7 @@ echo ^|                Desinstalador                ^|
 echo ^+---------------------------------------------^+
 echo:
 call :delete_task "ScriptClaudinei"
+call :delete_folder "%PROGRAMDATA%\Claudinei" "Claudinei"
 echo Script desinstalado com sucesso.
 call :pausar 5
 goto menu
@@ -143,6 +144,21 @@ if errorlevel 1 (
     exit
 )
 echo Diretório '%FOLDER_NAME%' criado com sucesso.
+call :pausar 1
+exit /b 0
+
+:delete_folder
+set "DIR_PATH=%~1"
+set "DIR_NAME=%~2"
+echo Apagando a pasta '%DIR_NAME%'...
+rmdir /S /Q "%DIR_PATH%" >nul 2>&1
+if errorlevel 1 (
+	color 0C
+    echo Erro ao apagar '%DIR_NAME%'. Verifique se o diretório existe ou se você tem permissões suficientes.
+	call :pausar 5
+	exit
+)
+echo Pasta '%DIR_NAME%' apagada com sucesso.
 call :pausar 1
 exit /b 0
 
