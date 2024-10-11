@@ -88,7 +88,7 @@ goto menu
 set "TASK_NAME=%~1"
 set "SCRIPT_TO_RUN=%~2"
 echo Criando a task '%TASK_NAME%'...
-schtasks /create /tn "%TASK_NAME%" /tr "%SCRIPT_TO_RUN%" /sc onstart /ru SYSTEM /RL HIGHEST >nul 2>&1
+schtasks /create /tn "%TASK_NAME%" /tr "%SCRIPT_TO_RUN%" /sc onstart /RU SYSTEM /RL HIGHEST >nul 2>&1
 if errorlevel 1 (
     color 0C
     echo Erro ao criar a task '%TASK_NAME%'. Verifique permissões.
@@ -118,9 +118,8 @@ set "TASK_NAME=%~1"
 echo Deletando a task '%TASK_NAME%'...
 schtasks /delete /tn "%TASK_NAME%" /f >nul 2>&1
 if errorlevel 1 (
-    color 0C
     echo Erro ao deletar a task '%TASK_NAME%'. Verifique se a task existe.
-    call :pausar 5
+    call :pausar 2
     exit /b 1
 )
 echo Task '%TASK_NAME%' deletada com sucesso.
