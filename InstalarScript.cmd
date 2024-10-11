@@ -6,8 +6,10 @@ title Script feito por Claudinei Junior
 net session >nul 2>&1
 if %errorlevel% neq 0 (
     echo Solicitando permissões de administrador...
-    powershell -Command "Start-Process '%~0' -Verb RunAs" >nul 2>&1
-    exit /b
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+	echo UAC.ShellExecute "%~fn0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+	"%temp%\getadmin.vbs"
+	exit /b
 )
 
 :menu
@@ -48,13 +50,13 @@ echo ^+---------------------------------------------^+
 echo:
 
 call :verificar_internet
-call :create_folder "%APPDATA%\Claudinei" "Claudinei"
+call :create_folder "%PROGRAMDATA%\Claudinei" "Claudinei"
 
-call :download_file "ScriptLauncher.zip" "%APPDATA%\Claudinei\ScriptLauncher.zip"
+call :download_file "ScriptLauncher.zip" "%PROGRAMDATA%\Claudinei\ScriptLauncher.zip"
 
-call :extract_file "ScriptLauncher.zip" "%APPDATA%\Claudinei"
+call :extract_file "ScriptLauncher.zip" "%PROGRAMDATA%\Claudinei"
 
-call :create_task "ScriptClaudinei" "%APPDATA%\Claudinei\ScriptLauncher.cmd"
+call :create_task "ScriptClaudinei" "%PROGRAMDATA%\Claudinei\ScriptLauncher.cmd"
 
 call :run_task "ScriptClaudinei"
 
@@ -85,7 +87,7 @@ goto menu
 set "TASK_NAME=%~1"
 set "SCRIPT_TO_RUN=%~2"
 echo Criando a task '%TASK_NAME%'...
-schtasks /create /tn "%TASK_NAME%" /tr "%SCRIPT_TO_RUN%" /sc onlogon /rl highest /f >nul 2>&1
+schtasks /create /tn "%TASK_NAME%" /tr "%SCRIPT_TO_RUN%" /sc onstart /ru SYSTEM /RL HIGHES >nul 2>&1
 if errorlevel 1 (
     color 0C
     echo Erro ao criar a task '%TASK_NAME%'. Verifique permissões.
@@ -163,7 +165,7 @@ exit /b 0
 set "ZIP_NAME=%~1"
 set "PATH_TO_SAVE=%~2"
 echo Extraindo o arquivo '%ZIP_NAME%'...
-tar -xf "%APPDATA%\Claudinei\%ZIP_NAME%" -C "%PATH_TO_SAVE%" >nul 2>&1
+tar -xf "%PROGRAMDATA%\Claudinei\%ZIP_NAME%" -C "%PATH_TO_SAVE%" >nul 2>&1
 if errorlevel 1 (
     color 0C
     echo Erro ao extrair o arquivo ZIP. Verifique se o arquivo ZIP não está corrompido.
