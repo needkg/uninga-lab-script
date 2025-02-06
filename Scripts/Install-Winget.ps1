@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Instala ou atualiza o winget com verificações completas e interface interativa
 
@@ -54,6 +54,23 @@ $script:Config = @{
         }
     }
     Requirements = @(
+        @{
+            Test = { 
+                $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+                $principal = New-Object Security.Principal.WindowsPrincipal($identity)
+                if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+                    try {
+                        $argList = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args"
+                        Start-Process powershell.exe -Verb RunAs -ArgumentList $argList
+                        exit
+                    } catch {
+                        return $false
+                    }
+                }
+                return $true
+            }
+            Message = "Privilégios de Administrador"
+        },
         @{
             Test = { [System.Environment]::OSVersion.Version.Major -ge 10 }
             Message = "Windows 10 ou superior"
@@ -312,7 +329,7 @@ function Start-WingetInstallation {
                     'R' { 
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Warning
                         Write-LogMessage "Iniciando reinstalação..." -Type Warning 
-                        Write-Host "$separator`n" -ForegroundColor $script:Config.UI.Colors.Warning
+                        Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Warning
                     }
                     'A' { 
                         if ($currentInstall.Version -ge [version]$script:Config.Package.Version) {
@@ -321,7 +338,7 @@ function Start-WingetInstallation {
                         }
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Success
                         Write-LogMessage "Iniciando atualização..." -Type Info
-                        Write-Host "$separator`n" -ForegroundColor $script:Config.UI.Colors.Success
+                        Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Warning
                     }
                     default { 
                         Write-LogMessage "Operação cancelada pelo usuário." -Type Info
