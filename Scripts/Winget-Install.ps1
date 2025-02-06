@@ -400,3 +400,7 @@ function Start-WingetInstallation {
 
 # Execução
 Start-WingetInstallation
+
+# Pausa final de 10 segundos
+Write-LogMessage "Waiting 10 seconds before closing..." -Type Info
+Start-Sleep -Seconds 10
