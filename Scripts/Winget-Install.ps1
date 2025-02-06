@@ -26,9 +26,9 @@ param(
 # Configurações globais
 $script:Config = @{
     Package = @{
-        Version = "1.9.25200"
-        Hash    = "46D46BB5DEACEF0FD8AC30A223072B45AC2D5D5262D1591F2C08FB6EE15E4B22"
-        Url     = "https://github.com/microsoft/winget-cli/releases/download/v1.9.25200/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
+        Version = "1.10.40"
+        Hash    = "686842FDFD1E28A239C7242815374D8B52BA1EBCB5D85EB38603C524F70D8F95"
+        Url     = "https://github.com/microsoft/winget-cli/releases/download/v1.10.40-preview/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle"
     }
     Paths = @{
         Temp   = Join-Path $env:TEMP "WingetInstall"
@@ -312,7 +312,7 @@ function Start-WingetInstallation {
         Write-LogMessage "Winget Status" -Type Info
         
         if ($currentInstall.IsInstalled) {
-            Write-Host "  $($script:Config.UI.Symbols.Info) Installed Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
+            Write-Host "  $($script:Config.UI.Symbols.Info) Installed Version: v" -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
             Write-Host "$($currentInstall.Version)" -ForegroundColor $script:Config.UI.Colors.Success
             Write-Host "  $($script:Config.UI.Symbols.Info) Script Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
             Write-Host "v$($script:Config.Package.Version)" -ForegroundColor $script:Config.UI.Colors.Success
