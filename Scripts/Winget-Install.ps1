@@ -45,12 +45,12 @@ $script:Config = @{
             Progress = "Blue"
         }
         Symbols = @{
-            Success = "✓"
-            Error   = "✗"
-            Warning = "⚠"
-            Info    = "ℹ"
-            Arrow   = "→"
-            Star    = "★"
+            Success = "✓ "
+            Error   = "✗ "
+            Warning = "⚠ "
+            Info    = "ℹ "
+            Arrow   = "→ "
+            Star    = "★ "
         }
     }
     Requirements = @(
