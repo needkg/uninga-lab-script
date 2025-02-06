@@ -94,7 +94,9 @@ $script:Config = @{
                 $principal = New-Object Security.Principal.WindowsPrincipal($identity)
                 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
                     try {
-                        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+                        $scriptUrl = 'https://raw.githubusercontent.com/needkg/uninga-lab-script/refs/heads/main/Scripts/Winget-Install.ps1'
+                        $encodedCommand = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes("irm $scriptUrl | iex"))
+                        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -EncodedCommand $encodedCommand" -Verb RunAs
                         exit
                     } catch {
                         return $false
