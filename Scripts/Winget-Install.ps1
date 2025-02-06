@@ -1,15 +1,15 @@
 <#
 .SYNOPSIS
-Instala ou atualiza o winget com verificações completas e interface interativa
+Installs or updates winget with complete checks and interactive interface
 
 .DESCRIPTION
-Funcionalidades incluídas:
-- Verificação de instalação existente em 3 níveis
-- Comparação de versões
-- Download seguro com verificação de hash
-- Interface colorida e interativa
-- Opções de reinstalação/atualização
-- Limpeza automática de arquivos temporários
+Included features:
+- Existing installation verification at 3 levels
+- Version comparison
+- Secure download with hash verification
+- Colored and interactive interface
+- Reinstall/update options
+- Automatic cleanup of temporary files
 
 .EXAMPLE
 PS> .\Install-Winget.ps1
@@ -69,15 +69,15 @@ $script:Config = @{
                 }
                 return $true
             }
-            Message = "Privilégios de Administrador"
+            Message = "Administrator Privileges"
         },
         @{
             Test = { [System.Environment]::OSVersion.Version.Major -ge 10 }
-            Message = "Windows 10 ou superior"
+            Message = "Windows 10 or higher"
         }
         @{
             Test = { [Environment]::Is64BitOperatingSystem }
-            Message = "Sistema 64 bits"
+            Message = "64-bit System"
         }
         @{
             Test = { $PSVersionTable.PSVersion.Major -ge 5 }
@@ -92,7 +92,7 @@ $script:Config = @{
                     return $false
                 }
             }
-            Message = "Conexão com a Internet"
+            Message = "Internet Connection"
         }
         @{
             Test = {
@@ -103,7 +103,7 @@ $script:Config = @{
                     return $false
                 }
             }
-            Message = "Suporte a pacotes MSIX/AppX"
+            Message = "MSIX/AppX Package Support"
         }
     )
 }
@@ -150,7 +150,7 @@ function Show-InstallBanner {
     ║  ╚███╔███╔╝██║██║ ╚████║╚██████╔╝███████╗   ██║          ║
     ║   ╚══╝╚══╝ ╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚══════╝   ╚═╝          ║
     ║                                                          ║
-    ║          🚀 Instalador Automatizado Winget 🚀            ║
+    ║          🚀 Winget Automated Installer 🚀               ║
     ║                                                          ║
     ╚══════════════════════════════════════════════════════════╝
 "@ -ForegroundColor $bannerColor
@@ -161,20 +161,20 @@ function Show-InstallBanner {
 
 # Funções de Validação
 function Test-SystemRequirements {
-    Write-LogMessage "Iniciando verificações..." -Type Info
+    Write-LogMessage "Starting checks..." -Type Info
     
     foreach ($req in $script:Config.Requirements) {
-        Write-Host "$($script:Config.UI.Symbols.Arrow) Verificando $($req.Message)... " -NoNewline
+        Write-Host "$($script:Config.UI.Symbols.Arrow) Checking $($req.Message)... " -NoNewline
         if (& $req.Test) {
             Write-Host $script:Config.UI.Symbols.Success -ForegroundColor $script:Config.UI.Colors.Success
         } else {
             Write-Host $script:Config.UI.Symbols.Error -ForegroundColor $script:Config.UI.Colors.Error
-            throw "Requisito não atendido: $($req.Message)"
+            throw "Requirement not met: $($req.Message)"
         }
         Start-Sleep -Milliseconds 300
     }
 
-    Write-LogMessage "Todos os requisitos atendidos!" -Type Success
+    Write-LogMessage "All requirements met!" -Type Success
 }
 
 function Test-WingetInstallation {
@@ -230,7 +230,7 @@ function Get-WingetPackage {
     )
 
     try {
-        Write-LogMessage "Iniciando download do pacote Winget..." -Type Info
+        Write-LogMessage "Starting package download..." -Type Info
         
         if (-not (Test-Path $script:Config.Paths.Temp)) {
             New-Item -Path $script:Config.Paths.Temp -ItemType Directory -Force | Out-Null
@@ -239,11 +239,11 @@ function Get-WingetPackage {
         $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         Invoke-WebRequest -Uri $Url -OutFile $Destination -UseBasicParsing
         
-        Write-LogMessage "Download concluído em $($stopwatch.Elapsed.ToString())" -Type Success
+        Write-LogMessage "Download completed in $($stopwatch.Elapsed.ToString())" -Type Success
         return $true | Out-Null
     }
     catch {
-        Write-LogMessage "Erro no download: $($_.Exception.Message)" -Type Error
+        Write-LogMessage "Download error: $($_.Exception.Message)" -Type Error
         throw
     }
 }
@@ -254,18 +254,18 @@ function Test-PackageHash {
         [string]$ExpectedHash = $script:Config.Package.Hash
     )
 
-    Write-LogMessage "Verificando integridade do pacote..." -Type Info
+    Write-LogMessage "Checking package integrity..." -Type Info
     
     try {
         $actualHash = (Get-FileHash -Path $FilePath -Algorithm SHA256).Hash
         if ($actualHash -ne $ExpectedHash) {
-            throw "Hash inválido! Esperado: $ExpectedHash`nObtido: $actualHash"
+            throw "Invalid hash! Expected: $ExpectedHash`nGot: $actualHash"
         }
-        Write-LogMessage "Integridade do pacote verificada" -Type Success
+        Write-LogMessage "Package integrity verified" -Type Success
         return $true | Out-Null
     }
     catch {
-        Write-LogMessage "Falha na verificação de integridade!" -Type Error
+        Write-LogMessage "Integrity check failed!" -Type Error
         throw
     }
 }
@@ -276,25 +276,25 @@ function Install-WingetPackage {
     )
 
     try {
-        Write-LogMessage "Iniciando processo de instalação..." -Type Info
+        Write-LogMessage "Starting installation process..." -Type Info
         
-        $steps = @("Preparando", "Extraindo", "Configurando", "Finalizando")
+        $steps = @("Preparing", "Extracting", "Configuring", "Finishing")
         $totalSteps = $steps.Count
         
         foreach ($i in 0..($totalSteps-1)) {
             $step = $steps[$i]
             $percent = [math]::Round(($i + 1) / $totalSteps * 100)
-            Write-Progress -Activity "Instalando Winget" -Status "$step..." -PercentComplete $percent
+            Write-Progress -Activity "Installing Winget" -Status "$step..." -PercentComplete $percent
             Start-Sleep -Milliseconds 800
         }
 
         Add-AppxPackage -Path $BundlePath -ErrorAction Stop
-        Write-Progress -Activity "Instalando Winget" -Completed
+        Write-Progress -Activity "Installing Winget" -Completed
         
         return $true | Out-Null
     }
     catch {
-        Write-LogMessage "Erro na instalação: $($_.Exception.Message)" -Type Error
+        Write-LogMessage "Installation error: $($_.Exception.Message)" -Type Error
         throw
     }
 }
@@ -309,64 +309,64 @@ function Start-WingetInstallation {
         $separator = "─" * 70
         
         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Info
-        Write-LogMessage "Status do Winget" -Type Info
+        Write-LogMessage "Winget Status" -Type Info
         
         if ($currentInstall.IsInstalled) {
-            Write-Host "  $($script:Config.UI.Symbols.Info) Versão Instalada: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
+            Write-Host "  $($script:Config.UI.Symbols.Info) Installed Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
             Write-Host "$($currentInstall.Version)" -ForegroundColor $script:Config.UI.Colors.Success
-            Write-Host "  $($script:Config.UI.Symbols.Info) Versão do Script: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
+            Write-Host "  $($script:Config.UI.Symbols.Info) Script Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
             Write-Host "v$($script:Config.Package.Version)" -ForegroundColor $script:Config.UI.Colors.Success
             Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Info
 
             if (-not $Force) {
-                Write-Host "`n  Escolha uma opção:" -ForegroundColor $script:Config.UI.Colors.Info
-                Write-Host "  $($script:Config.UI.Symbols.Arrow) (R) Reinstalar" -ForegroundColor $script:Config.UI.Colors.Warning
-                Write-Host "  $($script:Config.UI.Symbols.Arrow) (A) Atualizar" -ForegroundColor $script:Config.UI.Colors.Success
-                Write-Host "  $($script:Config.UI.Symbols.Arrow) (S) Sair" -ForegroundColor $script:Config.UI.Colors.Error
-                $choice = Read-Host "`n  Digite sua escolha"
+                Write-Host "`n  Choose an option:" -ForegroundColor $script:Config.UI.Colors.Info
+                Write-Host "  $($script:Config.UI.Symbols.Arrow) (R) Reinstall" -ForegroundColor $script:Config.UI.Colors.Warning
+                Write-Host "  $($script:Config.UI.Symbols.Arrow) (U) Update" -ForegroundColor $script:Config.UI.Colors.Success
+                Write-Host "  $($script:Config.UI.Symbols.Arrow) (Q) Quit" -ForegroundColor $script:Config.UI.Colors.Error
+                $choice = Read-Host "`n  Enter your choice"
                 
                 switch ($choice.ToUpper()) {
                     'R' { 
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Warning
-                        Write-LogMessage "Iniciando reinstalação..." -Type Warning 
+                        Write-LogMessage "Starting reinstallation..." -Type Warning 
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Warning
                     }
-                    'A' { 
+                    'U' { 
                         if ($currentInstall.Version -ge [version]$script:Config.Package.Version) {
-                            Write-LogMessage "Versão instalada já é a mais recente!" -Type Success
+                            Write-LogMessage "Installed version is already up to date!" -Type Success
                             return
                         }
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Success
-                        Write-LogMessage "Iniciando atualização..." -Type Info
+                        Write-LogMessage "Starting update..." -Type Info
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Warning
                     }
                     default { 
-                        Write-LogMessage "Operação cancelada pelo usuário." -Type Info
+                        Write-LogMessage "Operation cancelled by user." -Type Info
                         return
                     }
                 }
             }
         } else {
-            Write-Host "  $($script:Config.UI.Symbols.Info) Versão Instalada: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
-            Write-Host "Não instalado" -ForegroundColor $script:Config.UI.Colors.Error
-            Write-Host "  $($script:Config.UI.Symbols.Info) Versão do Script: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
+            Write-Host "  $($script:Config.UI.Symbols.Info) Installed Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
+            Write-Host "Not installed" -ForegroundColor $script:Config.UI.Colors.Error
+            Write-Host "  $($script:Config.UI.Symbols.Info) Script Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
             Write-Host "v$($script:Config.Package.Version)" -ForegroundColor $script:Config.UI.Colors.Success
             Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Info
 
             if (-not $Force) {
-                Write-Host "`n  Escolha uma opção:" -ForegroundColor $script:Config.UI.Colors.Info
-                Write-Host "  $($script:Config.UI.Symbols.Arrow) (I) Instalar" -ForegroundColor $script:Config.UI.Colors.Success
-                Write-Host "  $($script:Config.UI.Symbols.Arrow) (S) Sair" -ForegroundColor $script:Config.UI.Colors.Error
-                $choice = Read-Host "`n  Digite sua escolha"
+                Write-Host "`n  Choose an option:" -ForegroundColor $script:Config.UI.Colors.Info
+                Write-Host "  $($script:Config.UI.Symbols.Arrow) (I) Install" -ForegroundColor $script:Config.UI.Colors.Success
+                Write-Host "  $($script:Config.UI.Symbols.Arrow) (Q) Quit" -ForegroundColor $script:Config.UI.Colors.Error
+                $choice = Read-Host "`n  Enter your choice"
                 
                 switch ($choice.ToUpper()) {
                     'I' { 
                         Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Success
-                        Write-LogMessage "Iniciando instalação..." -Type Info
+                        Write-LogMessage "Starting installation..." -Type Info
                         Write-Host "$separator`n" -ForegroundColor $script:Config.UI.Colors.Success
                     }
                     default { 
-                        Write-LogMessage "Operação cancelada pelo usuário." -Type Info
+                        Write-LogMessage "Operation cancelled by user." -Type Info
                         return
                     }
                 }
@@ -381,14 +381,14 @@ function Start-WingetInstallation {
         # Verificação final
         $finalInstall = Test-WingetInstallation
         if ($finalInstall.IsInstalled) {
-            Write-LogMessage "Instalação concluída com sucesso! ($($finalInstall.Version))" -Type Success
+            Write-LogMessage "Installation completed successfully! ($($finalInstall.Version))" -Type Success
         }
         else {
-            throw "Instalação aparentemente bem-sucedida, mas winget não encontrado!"
+            throw "Installation apparently successful, but winget not found!"
         }
     }
     catch {
-        Write-LogMessage "Erro crítico: $($_.Exception.Message)" -Type Error
+        Write-LogMessage "Critical error: $($_.Exception.Message)" -Type Error
         throw
     }
     finally {
