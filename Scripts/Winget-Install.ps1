@@ -55,6 +55,40 @@ $script:Config = @{
     }
     Requirements = @(
         @{
+            Test = { [System.Environment]::OSVersion.Version.Major -ge 10 }
+            Message = "Windows 10 or higher"
+        },
+        @{
+            Test = { [Environment]::Is64BitOperatingSystem }
+            Message = "64-bit System"
+        },
+        @{
+            Test = { $PSVersionTable.PSVersion.Major -ge 5 }
+            Message = "PowerShell 5+"
+        },
+        @{
+            Test = {
+                try {
+                    $appxProvider = Get-Command Add-AppxPackage -ErrorAction SilentlyContinue
+                    return $null -ne $appxProvider
+                } catch {
+                    return $false
+                }
+            }
+            Message = "MSIX/AppX Package Support"
+        },
+        @{
+            Test = {
+                try {
+                    $response = Invoke-WebRequest -Uri "http://www.msftconnecttest.com/connecttest.txt" -UseBasicParsing -TimeoutSec 10
+                    return $response.StatusCode -eq 200
+                } catch {
+                    return $false
+                }
+            }
+            Message = "Internet Connection"
+        },
+        @{
             Test = { 
                 $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
                 $principal = New-Object Security.Principal.WindowsPrincipal($identity)
@@ -70,40 +104,6 @@ $script:Config = @{
                 return $true
             }
             Message = "Administrator Privileges"
-        },
-        @{
-            Test = { [System.Environment]::OSVersion.Version.Major -ge 10 }
-            Message = "Windows 10 or higher"
-        }
-        @{
-            Test = { [Environment]::Is64BitOperatingSystem }
-            Message = "64-bit System"
-        }
-        @{
-            Test = { $PSVersionTable.PSVersion.Major -ge 5 }
-            Message = "PowerShell 5+"
-        }
-        @{
-            Test = {
-                try {
-                    $response = Invoke-WebRequest -Uri "http://www.msftconnecttest.com/connecttest.txt" -UseBasicParsing -TimeoutSec 10
-                    return $response.StatusCode -eq 200
-                } catch {
-                    return $false
-                }
-            }
-            Message = "Internet Connection"
-        }
-        @{
-            Test = {
-                try {
-                    $appxProvider = Get-Command Add-AppxPackage -ErrorAction SilentlyContinue
-                    return $null -ne $appxProvider
-                } catch {
-                    return $false
-                }
-            }
-            Message = "MSIX/AppX Package Support"
         }
     )
 }
