@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 Instala ou atualiza o winget com verificações completas e interface interativa
 
