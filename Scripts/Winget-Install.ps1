@@ -312,8 +312,8 @@ function Start-WingetInstallation {
         Write-LogMessage "Winget Status" -Type Info
         
         if ($currentInstall.IsInstalled) {
-            Write-Host "  $($script:Config.UI.Symbols.Info) Installed Version: v" -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
-            Write-Host "$($currentInstall.Version)" -ForegroundColor $script:Config.UI.Colors.Success
+            Write-Host "  $($script:Config.UI.Symbols.Info) Installed Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
+            Write-Host "v$($currentInstall.Version)" -ForegroundColor $script:Config.UI.Colors.Success
             Write-Host "  $($script:Config.UI.Symbols.Info) Script Version: " -NoNewline -ForegroundColor $script:Config.UI.Colors.Info
             Write-Host "v$($script:Config.Package.Version)" -ForegroundColor $script:Config.UI.Colors.Success
             Write-Host "`n$separator" -ForegroundColor $script:Config.UI.Colors.Info
