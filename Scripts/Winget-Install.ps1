@@ -94,8 +94,7 @@ $script:Config = @{
                 $principal = New-Object Security.Principal.WindowsPrincipal($identity)
                 if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
                     try {
-                        $argList = "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" $args"
-                        Start-Process powershell.exe -Verb RunAs -ArgumentList $argList
+                        Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
                         exit
                     } catch {
                         return $false
